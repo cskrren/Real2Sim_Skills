@@ -1,13 +1,13 @@
 # Real2Sim Skills
 
-当前基线版本：**v0**。Git 标签 `v0` 固定保存本次发布版本。
+当前版本：**v1**。Git 标签 `v0` 保留更新前的流程基线。
 
-[Real2Sim Prompt v0](skills/real2sim-prompt/SKILL.md) 包含两步：
+[Real2Sim Prompt v1](skills/real2sim-prompt/SKILL.md) 包含两步：
 
 1. 多视角真实视频 → Blender 场景与动作重建、交互关键帧五问及对照输出。
 2. Blender → MuJoCo 结构与接触迁移、物理抓取/操作校准及独立验收。
 
-本版本保存现有流程，不包含与 GPT6-real2sim 对比后提出的后续增强。
+v1 增强：材质、纹理、灯光与主要背景补全；MuJoCo 原生轨迹回传 Blender 精细渲染；多视角联合拟合与留出帧检查；有假设、检查实际生效参数的接触校准。保留逐事件五问、异常前后检查和用户接受后的停止条件。
 
 ## 使用
 
