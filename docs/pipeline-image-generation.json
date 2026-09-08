@@ -1,0 +1,10 @@
+{
+  "mode": "built_in_image_gen",
+  "model": "not exposed by tool",
+  "prompt": "pipeline-image-prompt.txt",
+  "edit_prompt": "pipeline-image-edit-prompt.txt",
+  "output": "pipeline-v1.png",
+  "sha256": "ba1bde2578855a01a355e7aa1cc730e476540286dff5465af11a49d5d519f496",
+  "visual_review": "Checked main flow, before/onset/after events, five questions, separate physics, shared five-iteration cap and final rendering. Corrected material label and removed invented metric sublabels.",
+  "illustrations": "schematics, not actual test results"
+}

@@ -1,0 +1,22 @@
+Use case: infographic-diagram
+Asset type: technical workflow diagram for a reusable robot reconstruction skill.
+Create a polished, highly legible Chinese infographic on a warm white background, wide landscape 16:10, crisp typography, restrained blue/teal/orange accents, generous spacing. Title exactly "Real2Sim Pipeline v1", subtitle "事件驱动 · 多视角复核 · 原生物理 · 最多 5 轮修正". Use clean labeled process boxes and explicit arrowheads, small understated icons of video, robot, contact, renderer. No decorative pseudo-code.
+Logical layout:
+Top row, left to right four numbered boxes connected:
+"01 真实视频与来源" small text "全部视角 · 帧号与时间 · 全新输入边界"
+"02 发现交互事件" small text "新接触 / 分离 / 抓持 / 支撑转移" and "变化前 → 发生时或区间 → 变化后"
+"03 Blender 场景与动作" small text "URDF · 相机 · 几何 · 材质纹理与背景"
+"04 全场景审计" small text "结构连接 · 初始支撑 · 空腔 · 碰撞与运动"
+Below top row, a blue Stage 1 review card fed by 04: "第一步：事件邻域五问" with five distinct numbered lines:
+"① 最大差异"
+"② 同帧相机是否对齐"
+"③ 物体相对位置是否一致"
+"④ 是否穿模或接触异常"
+"⑤ 逼真度是否满足用途"
+One small note "每个检查帧 × 每个可用视角".
+An arrow from this card labeled "第一步通过" to a teal Stage 2 card: "第二步：MuJoCo 原生执行" small text "结构与碰撞迁移 → 分阶段执行 → 对准、闭合、双侧接触 → 力与摩擦校准"
+Then an arrow to another teal review card "五问 + 逐步物理复核" small text "真实与模拟事件邻域取并集" and "穿入 · 承载 · 滑移 · 力矩 · 支撑 · 末态稳定".
+A prominent bottom decision box "本轮必需检查通过？" receives arrows from Stage 2 review. A green Yes arrow leads to "完整相关回归 → Blender 精细渲染" and "同源帧 real RGB / sim RGB · 全部视角 · 视频按需".
+An orange feedback path shared by both review cards reads "发现阻塞 → 定位 → 修改 → 前后扩查 → 再复核", loops back to relevant scene/execution steps. Badge "每场景两步共用 5 轮 · 基线为第 0 轮". Branch from orange feedback labeled "已达 5 轮仍未通过" ends in small neutral box "交付最佳候选与未解决项".
+Bottom footnote exact "参考截图不能替代事件发现；视觉通过与物理成功分别记录。"
+Constraints: logically faithful arrows. First stage must have review before transition to stage two; failed physical review can require returning to Blender geometry. Successful final regression precedes final rendering. Budget shared across two stages, no implication 5 per stage. Real contact observations and simulated contact evidence are distinct. No claim the four test scenes were rebuilt or passed. Ensure Chinese text is readable and avoid overly small text.
