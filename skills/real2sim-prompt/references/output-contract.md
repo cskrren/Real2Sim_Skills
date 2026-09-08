@@ -68,3 +68,9 @@
 - **回传绑定**：显示对象与物理 body/link 的映射、局部偏置、轨迹来源/哈希、采样/插值、各视角时间映射、求值变换误差及重开工程复核结果。
 - **可复现渲染**：显示工程、外部资产、相机、引擎/版本/设备、样本/降噪、输出尺寸/像素比例、图像与原生轨迹哈希；记录已检查的样帧与未检查项。缺失资源不得静默回退后仍标为精细渲染通过。
 - **试验假设**：校准目的、改变变量、预期/实测响应、实际生效参数和接受/拒绝理由；敏感性试验不写成已完成物理辨识。
+
+## 迭代台账与停止状态
+
+每个场景沿用一个持久台账，最少保存 `run_id / scene_id / scope / max_iterations=5 / iterations_used / baseline / best_candidate / stop_reason`。每轮记录 `iteration / hypothesis / input_hashes / changes / tested_range / before_after_metrics / accepted / remaining_issues / evidence_paths`。修正开始验证即计数；环境失败另记，真实覆盖范围不可用计划替代。
+
+执行停止原因使用 `passed / iteration_limit_reached / blocked / user_stopped`，与任务、几何、视觉各自验收状态分开。达限交付列出“已用 n/5 轮”、最佳候选的优点与退化、未解决项及需要的下一步；不能把停止状态写成任务成功。已有完整报告可直接增加这些字段，无需为每轮生成重复长文或渲染全片。
