@@ -73,6 +73,10 @@
 
 ## 迭代台账与停止状态
 
-每个场景沿用一个持久台账，最少保存 `run_id / scene_id / scope / max_iterations=5 / iterations_used / baseline / best_candidate / stop_reason`。每轮记录 `iteration / hypothesis / input_hashes / changes / tested_range / before_after_metrics / accepted / remaining_issues / evidence_paths`。修正开始验证即计数；环境失败另记，真实覆盖范围不可用计划替代。
+每个场景沿用一个持久台账，最少保存 `run_id / scene_id / scope / max_iterations=null / iterations_used / baseline / best_candidate / stop_reason`。每轮记录 `iteration / hypothesis / input_hashes / changes / tested_range / before_after_metrics / accepted / remaining_issues / evidence_paths`。修正开始验证即计数；环境失败另记，真实覆盖范围不可用计划替代。
 
-执行停止原因使用 `passed / iteration_limit_reached / blocked / user_stopped`，与任务、几何、视觉各自验收状态分开。达限交付列出“已用 n/5 轮”、最佳候选的优点与退化、未解决项及需要的下一步；不能把停止状态写成任务成功。已有完整报告可直接增加这些字段，无需为每轮生成重复长文或渲染全片。
+执行停止原因使用 `passed / blocked / user_stopped`，与任务、几何、视觉各自验收状态分开。停止时列出实际完成的修正轮数、最佳候选的优点与退化、未解决项及具体停止原因；不能把停止状态写成任务成功。已有完整报告可直接增加这些字段，无需为每轮生成重复长文或渲染全片。
+
+## 首帧静态接受与动态交接
+
+第一步可独立交付 `scene.blend`、相机/尺度与实例清单、机器人初态/手眼来源、首帧各视角 RGB/灰模/五问、静态审计与已知偏差。用户确认后以 `phase_acceptance.json` 绑定候选、scene/config 哈希、原话、接受范围、历史严格证据结果及需重开条件。接受首帧不补成已完成动作或物理。第二步另交付真实事件表、源帧映射、运动/开合参考及来源，随后才是原生控制与 rollout。
