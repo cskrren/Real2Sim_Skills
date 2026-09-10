@@ -1,11 +1,11 @@
 ---
 name: real2sim-prompt
-description: Reconstruct scenes from real robot or human video in Blender; replay robot demonstrations or retarget human actions to a target robot, execute and validate contacts in MuJoCo, and export frame-matched comparisons.
+description: Reconstruct scenes from real robot or human video in Blender; replay robot demonstrations or select target hardware and retarget human actions to it, execute and validate contacts in MuJoCo, and export frame-matched comparisons.
 metadata:
-  version: "v3"
+  version: "v3.2"
 ---
 
-# Real2Sim Prompt v3
+# Real2Sim Prompt v3.2
 
 分两步处理 Real2Sim / Human2Robot：**第一步，真实输入首帧 → 对齐的 Blender 静态场景；第二步，真实视频动作 → MuJoCo 实际物理执行 → 回传 Blender 多视角渲染。** 两步共用源索引、交互关键帧、坐标与参数来源记录。默认追求**可用的交互重建**；先让目标、相机方向、相对位置和操作过程可辨认，再按任务需要提高精度。用户认可的质量是当前项目的验收依据，不因仍有差异而无限返工。
 
@@ -15,6 +15,8 @@ metadata:
 
 - **robot real data**：同硬件优先使用实测关节、TCP 与开合；RGB-only 用对应硬件关节链拟合。换硬件时显式执行 robot-to-robot 重定向。
 - **human real data**：第一步选择/初始化目标机器人并对齐静态初态；**第二步第 3 环节**将手部与对象相对动作重定向成目标机器人的末端、关节和夹爪参考，再经第 4 环节复核和第 5–7 环节物理验证。
+
+human 输入在第一步按用户选择确定机械臂与末端，未指定时采用已接受配置或说明选型依据。支持双 FR3 + Franka Hand（原装平行夹爪）、双 FR3 + Wuji Hand、双 FR3 + Sharpa Wave、ALOHA 系列及用户提供的 URDF/MJCF；硬件名称不等于任务已验证。选型、换硬件和多候选比较时读[目标机械臂选择与适配](references/target-robot-selection.md)。
 
 第二步固定使用同一编号，详见 [八环节执行说明](references/motion-execution.md)：
 
@@ -73,7 +75,7 @@ metadata:
 ### P0—P3：建立或恢复可检查场景
 
 1. **数据、索引与事件发现**：确认全部视角、共同帧范围、坐标/单位、时间戳与可用机器人状态。保持源帧、Blender帧、视频帧映射，区分实测、拟合、插值和模拟；播放帧率不冒充采集速率。本轮仅首帧时只确认首帧索引及必要静态观测，不为静态建模遍历全视频；进入第二步再按[事件与复核规范](references/events-and-review.md)从真实视频建立关系变化时间线。用户明确暂不做时间同步时保留同帧假设，不另启动偏移估计，也不将假设称为硬件同步。
-2. **首帧实例与几何初始化（按需）**：采用 Pi3X 初始化时，先由 Pi3X 联合估计各首帧相机、点云和置信度，再由 GPT6 选择交互物体、支撑物及显著核心背景，SAM 提取真实可见 mask，结合点云核对共享实例 ID 和语义；SAM 本身不保证跨相机身份一致。按实例拆分点云，初始化桌子等各物体 mesh，机器人使用 URDF/XML 结构；以同一三维场景的多视角投影迭代优化。按[首帧初始化](references/geometry-initialization.md)验收实例覆盖、机器人、几何和外观后再拟合动作。首帧通过不替代动作事件五问或物理验收。
+2. **几何初始化与多帧建模（robot/human 共用）**：单视角视频或单张 RGB 用 **MoGe-3** 初始化首帧几何；多相机首帧保留 **Pi3X 联合初始化**。保留可靠实测内外参，估计不覆盖测量。GPT6/SAM 识别交互物体、支撑和显著背景实例；**构建 mesh 以首帧 RGB 的轮廓、结构和遮挡为主，仅首帧参考点云辅助深度、平面、方向和尺度**，不直接把点云后处理当完整物体。选取后续视频中有新可见表面、遮挡解除或有效视差的重要稀疏 RGB 帧（首帧之外不超过10个时间索引；多视角按共享时间索引计数），结合相机/物体运动补全同一实例并重投影迭代。后续帧不生成或融合新的参考点云。单图不虚构后续观测。按[几何初始化](references/geometry-initialization.md)完成首帧及所用多帧复核后进入动作执行；机器人仍使用真实 URDF/XML 结构。
 3. **机器人与相机**：使用当前硬件的URDF或等效结构，处理visual/collision的origin、axis、scale、limit及mimic。保留结构节点和安装件，检查FK与可见连接。固定相机使用共享外参；腕部相机通过机械链与固定手眼变换运动。以机器人运动、物体轮廓和多视角观测约束相机与物体，拟合及留出帧检查见[工程排查](references/engineering.md)。
 4. **物体与场景**：先拟合操作区的尺度、形状、相对位置与材质；容器保留杯底、薄壁和空腔。显示资产与碰撞代理分开，共享对象局部坐标与运动。材质、纹理、光照和可见背景是最终视觉交付的一部分：先补对画面影响大的表面与轮廓，再按用途取舍小陈设；允许近似不等于交付基础色块。具体执行见[外观与物理轨迹渲染](references/rendering.md)。
 第一步保留基础材质、纹理与灯光用于场景辨认和对齐；系统性的五项外观优化安排在第二步第 8 环节，按[外观优化顺序](references/rendering.md)在原生轨迹回传后完成。

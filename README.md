@@ -1,10 +1,10 @@
 # Real2Sim Skills
 
-当前工作版本：**v3（Robot / Human 双输入与动作重定向版）**。已有历史标签保持不动，不重写同名旧标签。
+Current release: **v3.2 — RGB-first geometry and target-hardware adaptation**. Historical tags remain unchanged.
 
-[Real2Sim Prompt v3](skills/real2sim-prompt/SKILL.md) 包含两步：
+[Real2Sim Prompt v3.2](skills/real2sim-prompt/SKILL.md) 包含两步：
 
-1. 真实输入首帧 → 按可用相机、深度或 Pi3 估计初始化核心物体与目标机器人 → 全部真实视角的投影/灰模/五问检查。支持单视角与多视角，不虚构缺失视角。
+1. First-frame RGB scene initialization: single-view MoGe-3 / multi-view Pi3X; first-frame point clouds only, with at most 10 later sparse RGB time indices for mesh completion and projection checks.
 2. 真实事件发现 → 按 robot/human 分支恢复或重定向动作 → 关键帧五问与按需邻域回归 → MuJoCo 接触执行与独立验收 → 回传 Blender 三方对照。
 
 v1 增强：材质、纹理、灯光与主要背景补全；MuJoCo 原生轨迹回传 Blender 精细渲染；多视角联合拟合与留出帧检查；有假设、检查实际生效参数的接触校准。保留逐事件五问、异常前后检查和用户接受后的停止条件。
@@ -33,7 +33,7 @@ v1 增强：材质、纹理、灯光与主要背景补全；MuJoCo 原生轨迹�
 
 ## 两步共用能力
 
-- 第一步：Pi3 联合相机/点云/置信度 → GPT + SAM 共享实例 → 完整核心物体 mesh 与 URDF/XML 机器人 → 多视角投影迭代与首帧接受记录。
+- Stage 1: MoGe-3 / Pi3X first-frame geometry, RGB-led instance meshes, URDF/XML target robots, projection review and acceptance.
 - 第二步：真实事件与运动恢复 → 事件邻域五问 → MuJoCo 分段接触执行 → 完整物理回归 → 原生状态回传 Blender。
 - 抓取依次检查对准/角度、闭合量、双侧接触/滑移，再校准抓持力与摩擦。
 - 原生机器人、物体和物料统一绑定，重开 Blender 工程检查变换；按需输出同源 Real / Blender / MuJoCo 三方关键帧。
@@ -51,3 +51,20 @@ v1 增强：材质、纹理、灯光与主要背景补全；MuJoCo 原生轨迹�
 [双输入与重定向规范](skills/real2sim-prompt/references/input-and-retargeting.md) · [八环节说明](skills/real2sim-prompt/references/motion-execution.md)
 
 v3 发布的是流程支持，不代表全部机器人、人手任务或高保真重建已通过实测。两类输入共用独立的视觉、物理与时间验收。
+
+## v3.2 目标机械臂选择
+
+human data 在第一步选择并初始化目标机械臂与末端，第二步第3环节按硬件重定向，第4–7环节复核与物理验证，第8环节输出三方对照。支持双 FR3 + Franka Hand（原装平行夹爪）、双 FR3 + Wuji Hand、双 FR3 + Sharpa Wave、准确版本的 ALOHA 和用户提供的 URDF/MJCF；选择流程不等于每套硬件、每种任务都已通过。robot 同硬件数据仍走实测状态复用分支。
+
+详见[目标机械臂选择与适配](skills/real2sim-prompt/references/target-robot-selection.md)。多硬件共用已接受的静态背景和真实事件，分别验证安装、指垫、控制、原生接触和释放；案例参数与容差不作为通用默认值。
+
+几何初始化（robot/human 共用）：单视角视频/单张 RGB 使用 MoGe-3，多相机首帧保留 Pi3X；mesh 以首帧 RGB 为主、仅首帧点云为辅，结合不超过10个后续重要稀疏 RGB 帧补全并投影复核；后续不新增参考点云。第二步第8环节继续完成前后景纹理与灯光优化。
+
+## v3.2 release
+
+- Both human and robot inputs: single-view MoGe-3 or multi-view Pi3X initialization using first-frame geometry only.
+- Build meshes primarily from first-frame RGB, with point clouds assisting depth, orientation and scale. Use at most 10 additional sparse time indices for RGB completion and reprojection checks; do not add later-frame reference clouds.
+- Separate camera motion from object motion. The 10-frame bound applies to geometry support frames, not action events or diagnostic neighborhoods.
+- Hardware choices: dual FR3 + Franka Hand, dual FR3 + Wuji Hand, dual FR3 + Sharpa Wave, and ALOHA (local example: ALOHA 2). Historical custom-gripper/Allegro results do not validate replacement hardware.
+- Stage 8 retains foreground/background material, texture and lighting optimization and frame-matched Real / Blender / MuJoCo RGB.
+- Record unavailable inference environments and unvalidated hardware honestly; this release packages workflow instructions, not scene assets or a universal retargeting solver.

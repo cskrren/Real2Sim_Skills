@@ -43,9 +43,9 @@ review 检查记录、文件哈希、全部帧视角覆盖及问题关联；允�
 
 输入记录必须区分：原始 vendor URDF/Xacro、从它生成的 URDF、通用 MJCF 等效描述、视觉估计。记录实际加载文件及版本。只存在 MJCF 时不得宣称加载了 URDF；传感器、夹爪与底座安装变换若不在描述里，仍是待标定量。通用硬件描述与网格可在 fresh_start 使用，旧场景的底座、手眼和拟合轨迹不可复用。
 
-## Pi3X 实例优先初始化
+## MoGe-3 / Pi3X 实例初始化
 
-用户采用语义实例初始化时，initial_alignment.mode="instance_first"，并关联实例清单及哈希；字段和顺序见[首帧初始化](geometry-initialization.md)。review 允许诚实记录 pending 的 mask/mesh，检查现有证据哈希和视角覆盖。进入 physics/deliver 时还要求清单审核、可见区域分配、实例身份/几何、可见 mask、实际 mesh，以及机器人描述/结构/对齐证据齐全。纯数据校验不判断语义是否合理，也不替代三视角图像复核。
+用户采用语义实例初始化时，initial_alignment.mode="instance_first"，并关联实例清单及哈希；字段和顺序见[首帧初始化](geometry-initialization.md)。review 允许诚实记录 pending 的 mask/mesh，检查现有证据哈希和视角覆盖。进入 physics/deliver 时还要求清单审核、可见区域分配、实例身份/几何、可见 mask、实际 mesh，以及机器人描述/结构/对齐证据齐全。纯数据校验不判断语义是否合理，也不替代实际输入视角与所用多帧的图像复核。
 
 ## 静态阶段的用户接受与下一步边界
 
