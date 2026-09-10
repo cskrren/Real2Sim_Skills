@@ -1,4 +1,4 @@
 interface:
-  display_name: "Real2Sim Prompt v2"
-  short_description: "真实视频重建、MuJoCo接触校准与Blender多视角精细渲染"
-  default_prompt: "使用 $real2sim-prompt 按本轮范围先完成多视角首帧核心物体与机器人静态对齐，再恢复真实视频动作、验证 MuJoCo 接触执行并回传 Blender；按事件逐帧复核五问，保留用户接受范围及独立物理结论。"
+  display_name: "Real2Sim Prompt v3"
+  short_description: "机器人与人手视频重建、动作重定向、MuJoCo物理执行和三方渲染"
+  default_prompt: "使用 $real2sim-prompt 先识别 robot/human 输入并完成场景和目标机器人静态对齐，再按分支复用或重定向动作、验证 MuJoCo 原生接触并回传 Blender；按事件逐帧复核五问，保留用户接受范围及独立物理结论。"

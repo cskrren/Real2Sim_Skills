@@ -8,7 +8,7 @@
 
 - `candidate_id / iteration / scene_path / scene_sha256`：本次磁盘工程身份。基线 iteration=0，后续持续累计修正，不设上限。
 - `views`：输入中的所有有效相机 ID。
-- `required_frames`：真实事件 before/onset/after 与模拟/异常窗口的并集；只由当前输入事件及当前候选异常生成，不用仓库参考帧代替。context 帧单独标明但如列入 required_frames 也要检查。
+- `required_frames`：需要完整五问的帧集合，默认只含真实事件 representative 去重集，不用仓库参考帧代替。另记 event_keyframes、context_frames、additional_required_frames；若明确要求后两类完整五问才并入 required_frames，报告仍分开统计。邻域只记在 neighborhood_checks 和 issue.checked_window 中，不自动加入 required_frames。
 - `scene_audit`：`status / evidence`，在五问前完成连接、尺度、空腔、初态和全序列低成本几何/跳变审计。显示与碰撞差异、盲区明确记录。
 - `records`：每个必需 frame × view 一条，含 `frame / view / image_path / image_sha256 / reviewed / questions`。
 - `questions`：`largest_difference / camera_alignment / relative_object_alignment / penetration_and_contact / reconstruction_fidelity`。每问有 `status / observation / blocking`；观察问题①可用 observed，其余 pass / pass_with_notes / fail / review / not_evaluated。未看过的图不标 reviewed=true。
@@ -35,7 +35,7 @@ review 检查记录、文件哈希、全部帧视角覆盖及问题关联；允�
 1. 在当前候选查看全部新图/失效图，生成逐帧五问；记录问题优先级。
 2. 运行 review 门槛。缺项先补齐；问题按源时间/相机→相对位置→几何/接触→外观处理。
 3. 选明确问题形成下一候选，记录参数及预期；开始验证后占用一次修正。环境错误和同候选复验另记，不重置次数。
-4. 新图中检查同帧与前后邻域至稳定，补新增模拟事件/异常，逐问题关闭或保留；再运行 review 和 physics 门槛。
+4. 新图中复核关键帧；对已触发问题检查前后邻域的受影响项至稳定，记录 neighborhood_checks，补新增模拟事件/异常，逐问题关闭或保留；再运行 review 和 physics 门槛。
 5. physics 门槛失败时继续第一步修正；通过后才能进行完整原生执行。失败物理状态回传 Blender 后重新复核受到影响的相机/相对位置、接触和动作结果。
 6. 有可执行方案时继续修正；实际阻塞或用户停止时保留最佳候选与失败证据。不得临时改阈值或将诊断替换为成功。
 
