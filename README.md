@@ -1,8 +1,8 @@
 # Real2Sim Skills
 
-Current release: **v3.2 — RGB-first geometry and target-hardware adaptation**. Historical tags remain unchanged.
+Current release: **v3.3 — contact-aware retargeting and verified delivery**. Historical tags remain unchanged.
 
-[Real2Sim Prompt v3.2](skills/real2sim-prompt/SKILL.md) 包含两步：
+[Real2Sim Prompt v3.3](skills/real2sim-prompt/SKILL.md) 包含两步：
 
 1. First-frame RGB scene initialization: single-view MoGe-3 / multi-view Pi3X; first-frame point clouds only, with at most 10 later sparse RGB time indices for mesh completion and projection checks.
 2. 真实事件发现 → 按 robot/human 分支恢复或重定向动作 → 关键帧五问与按需邻域回归 → MuJoCo 接触执行与独立验收 → 回传 Blender 三方对照。
@@ -68,3 +68,9 @@ human data 在第一步选择并初始化目标机械臂与末端，第二步第
 - Hardware choices: dual FR3 + Franka Hand, dual FR3 + Wuji Hand, dual FR3 + Sharpa Wave, and ALOHA (local example: ALOHA 2). Historical custom-gripper/Allegro results do not validate replacement hardware.
 - Stage 8 retains foreground/background material, texture and lighting optimization and frame-matched Real / Blender / MuJoCo RGB.
 - Record unavailable inference environments and unvalidated hardware honestly; this release packages workflow instructions, not scene assets or a universal retargeting solver.
+
+## v3.3：四硬件执行经验
+
+保留 v3.2 的两步八环节与 robot/human 双输入、MoGe-3/Pi3X 首帧初始化规则。新增实际碰撞面与法向适配、非抓持手指避让、释放路径和整体包含检查、异常几何指标复核，以及全输出帧原生状态/相机绑定验收。
+
+[执行排查参考](skills/real2sim-prompt/references/contact-and-delivery.md) · [EgoDex 1338 经验与边界](docs/v3.3-lessons.md)

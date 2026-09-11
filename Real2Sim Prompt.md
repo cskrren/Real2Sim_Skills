@@ -2,10 +2,10 @@
 name: real2sim-prompt
 description: Reconstruct scenes from real robot or human video in Blender; replay robot demonstrations or select target hardware and retarget human actions to it, execute and validate contacts in MuJoCo, and export frame-matched comparisons.
 metadata:
-  version: "v3.2"
+  version: "v3.3"
 ---
 
-# Real2Sim Prompt v3.2
+# Real2Sim Prompt v3.3
 
 分两步处理 Real2Sim / Human2Robot：**第一步，真实输入首帧 → 对齐的 Blender 静态场景；第二步，真实视频动作 → MuJoCo 实际物理执行 → 回传 Blender 多视角渲染。** 两步共用源索引、交互关键帧、坐标与参数来源记录。默认追求**可用的交互重建**；先让目标、相机方向、相对位置和操作过程可辨认，再按任务需要提高精度。用户认可的质量是当前项目的验收依据，不因仍有差异而无限返工。
 
@@ -123,6 +123,8 @@ human 输入在第一步按用户选择确定机械臂与末端，未指定时�
 模型导入、运动学回放、基础接触、实际任务及几何验收分别记录。物体由驱动器、接触与重力推进；状态回放或抓持附着不能冒充原生任务成功。保持所有可用视角和源时间映射，五问仅增量更新受影响项。任务完成不覆盖未解决的穿入问题，第一步画面认可也不代表物理通过。
 
 运行慢、物料/接触密集、需要恢复长跑或优化时，再读[性能与增量执行](skills/real2sim-prompt/references/mujoco-performance.md)。先短段定位成本和失败，候选有效后再跑全程；不要默认渲染每个失败候选或固定追加扰动批次。
+
+多硬件接触适配、抓持后释放失败或穿入指标异常时，读[接触面、释放与交付排查](skills/real2sim-prompt/references/contact-and-delivery.md)。该参考适用于 robot/human 两类输入；保持当前两步八环节、首帧点云与稀疏 RGB 建模规则。
 
 ## 控制时间与tokens
 
